@@ -19,8 +19,10 @@ primetask(void *arg)
 	p = chanrecvul(c);
 	if(p > goal)
 		taskexitall(0);
-	if(!quiet)
+	if(!quiet) {
+		printf(taskgetname());
 		printf("%d\n", p);
+	}
 	nc = chancreate(sizeof(unsigned long), buffer);
 	taskcreate(primetask, nc, 32768);
 	for(;;){

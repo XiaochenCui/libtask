@@ -1,0 +1,9 @@
+# vscode stuff
+.vscode
+
+# cmake stuff
+CMakeCache.txt
+CMakeFiles/
+build/
+cmake_install.cmake
+Makefile
