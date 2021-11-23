@@ -1,10 +1,13 @@
 cmake_minimum_required(VERSION 3.10)
 
-set(CMAKE_C_COMPILER "clang-12")
+set(CMAKE_C_COMPILER "gcc-9")
 
 project(LIBTASK C)
 
 set(C_STANDARD 99)
+
+# -g for debugging
+set(CMAKE_C_FLAGS "-g")
 
 set(BUILD_DIR ${CMAKE_SOURCE_DIR}/build)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BUILD_DIR}/bin)
@@ -16,7 +19,7 @@ file(GLOB lib_files
 )
 add_library(task STATIC ${lib_files})
 
-set(TARGET_LIST primes tcpproxy)
+set(TARGET_LIST primes tcpproxy helloworld)
 foreach (TARGET ${TARGET_LIST})
     add_executable(${TARGET} examples/${TARGET}.c)
     target_include_directories(${TARGET} PRIVATE src)
