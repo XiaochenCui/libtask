@@ -163,32 +163,32 @@ primes.c.s:
 	$(MAKE) -f CMakeFiles/primes.dir/build.make CMakeFiles/primes.dir/primes.c.s
 .PHONY : primes.c.s
 
-task.o: task.c.o
+src/task.o: src/task.c.o
 
-.PHONY : task.o
+.PHONY : src/task.o
 
 # target to build an object file
-task.c.o:
-	$(MAKE) -f CMakeFiles/task.dir/build.make CMakeFiles/task.dir/task.c.o
-.PHONY : task.c.o
+src/task.c.o:
+	$(MAKE) -f CMakeFiles/task.dir/build.make CMakeFiles/task.dir/src/task.c.o
+.PHONY : src/task.c.o
 
-task.i: task.c.i
+src/task.i: src/task.c.i
 
-.PHONY : task.i
+.PHONY : src/task.i
 
 # target to preprocess a source file
-task.c.i:
-	$(MAKE) -f CMakeFiles/task.dir/build.make CMakeFiles/task.dir/task.c.i
-.PHONY : task.c.i
+src/task.c.i:
+	$(MAKE) -f CMakeFiles/task.dir/build.make CMakeFiles/task.dir/src/task.c.i
+.PHONY : src/task.c.i
 
-task.s: task.c.s
+src/task.s: src/task.c.s
 
-.PHONY : task.s
+.PHONY : src/task.s
 
 # target to generate assembly for a file
-task.c.s:
-	$(MAKE) -f CMakeFiles/task.dir/build.make CMakeFiles/task.dir/task.c.s
-.PHONY : task.c.s
+src/task.c.s:
+	$(MAKE) -f CMakeFiles/task.dir/build.make CMakeFiles/task.dir/src/task.c.s
+.PHONY : src/task.c.s
 
 # Help Target
 help:
@@ -203,9 +203,9 @@ help:
 	@echo "... primes.o"
 	@echo "... primes.i"
 	@echo "... primes.s"
-	@echo "... task.o"
-	@echo "... task.i"
-	@echo "... task.s"
+	@echo "... src/task.o"
+	@echo "... src/task.i"
+	@echo "... src/task.s"
 .PHONY : help
 
 
