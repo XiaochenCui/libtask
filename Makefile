@@ -136,32 +136,59 @@ task/fast:
 	$(MAKE) -f CMakeFiles/task.dir/build.make CMakeFiles/task.dir/build
 .PHONY : task/fast
 
-primes.o: primes.c.o
+examples/primes.o: examples/primes.c.o
 
-.PHONY : primes.o
+.PHONY : examples/primes.o
 
 # target to build an object file
-primes.c.o:
-	$(MAKE) -f CMakeFiles/primes.dir/build.make CMakeFiles/primes.dir/primes.c.o
-.PHONY : primes.c.o
+examples/primes.c.o:
+	$(MAKE) -f CMakeFiles/primes.dir/build.make CMakeFiles/primes.dir/examples/primes.c.o
+.PHONY : examples/primes.c.o
 
-primes.i: primes.c.i
+examples/primes.i: examples/primes.c.i
 
-.PHONY : primes.i
+.PHONY : examples/primes.i
 
 # target to preprocess a source file
-primes.c.i:
-	$(MAKE) -f CMakeFiles/primes.dir/build.make CMakeFiles/primes.dir/primes.c.i
-.PHONY : primes.c.i
+examples/primes.c.i:
+	$(MAKE) -f CMakeFiles/primes.dir/build.make CMakeFiles/primes.dir/examples/primes.c.i
+.PHONY : examples/primes.c.i
 
-primes.s: primes.c.s
+examples/primes.s: examples/primes.c.s
 
-.PHONY : primes.s
+.PHONY : examples/primes.s
 
 # target to generate assembly for a file
-primes.c.s:
-	$(MAKE) -f CMakeFiles/primes.dir/build.make CMakeFiles/primes.dir/primes.c.s
-.PHONY : primes.c.s
+examples/primes.c.s:
+	$(MAKE) -f CMakeFiles/primes.dir/build.make CMakeFiles/primes.dir/examples/primes.c.s
+.PHONY : examples/primes.c.s
+
+src/channel.o: src/channel.c.o
+
+.PHONY : src/channel.o
+
+# target to build an object file
+src/channel.c.o:
+	$(MAKE) -f CMakeFiles/task.dir/build.make CMakeFiles/task.dir/src/channel.c.o
+.PHONY : src/channel.c.o
+
+src/channel.i: src/channel.c.i
+
+.PHONY : src/channel.i
+
+# target to preprocess a source file
+src/channel.c.i:
+	$(MAKE) -f CMakeFiles/task.dir/build.make CMakeFiles/task.dir/src/channel.c.i
+.PHONY : src/channel.c.i
+
+src/channel.s: src/channel.c.s
+
+.PHONY : src/channel.s
+
+# target to generate assembly for a file
+src/channel.c.s:
+	$(MAKE) -f CMakeFiles/task.dir/build.make CMakeFiles/task.dir/src/channel.c.s
+.PHONY : src/channel.c.s
 
 src/task.o: src/task.c.o
 
@@ -200,9 +227,12 @@ help:
 	@echo "... edit_cache"
 	@echo "... primes"
 	@echo "... task"
-	@echo "... primes.o"
-	@echo "... primes.i"
-	@echo "... primes.s"
+	@echo "... examples/primes.o"
+	@echo "... examples/primes.i"
+	@echo "... examples/primes.s"
+	@echo "... src/channel.o"
+	@echo "... src/channel.i"
+	@echo "... src/channel.s"
 	@echo "... src/task.o"
 	@echo "... src/task.i"
 	@echo "... src/task.s"
