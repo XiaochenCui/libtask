@@ -14,7 +14,7 @@ file(GLOB lib_files
 )
 add_library(task STATIC ${lib_files})
 
-set(TARGET_LIST primes)
+set(TARGET_LIST primes tcpproxy)
 foreach (TARGET ${TARGET_LIST})
     add_executable(${TARGET} examples/${TARGET}.c)
     target_include_directories(${TARGET} PRIVATE src)
