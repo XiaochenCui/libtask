@@ -234,7 +234,7 @@ altexec(Alt *a)
 		altcopy(a, nil);
 }
 
-#define dbgalt 0
+#define dbgalt 1
 int chanalt(Alt *a)
 {
 	int i, j, ncan, n, canblock;
@@ -385,14 +385,19 @@ channbrecvp(Channel *c)
 
 int chansendul(Channel *c, ulong val)
 {
-	return _chanop(c, CHANSND, &val, 1);
+	printf("channel %p going to send: %d\n", c, val);
+	int result = _chanop(c, CHANSND, &val, 1);
+	printf("channel %p send succeeded: %d\n", c, val);
+	return result;
 }
 
 ulong chanrecvul(Channel *c)
 {
 	ulong val;
 
+	printf("channel %p going to recv\n", c);
 	_chanop(c, CHANRCV, &val, 1);
+	printf("channel %p recv succeeded: %d\n", c, val);
 	return val;
 }
 
