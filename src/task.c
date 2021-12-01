@@ -155,7 +155,7 @@ int taskcreate(void (*fn)(void *), void *arg, uint stack)
 	t->alltaskslot = nalltask;
 	alltask[nalltask++] = t;
 	taskready(t);
-	printf("task creation successful, id: %d\n", id);
+	// printf("task creation successful, id: %d\n", id);
 	return id;
 }
 
@@ -232,12 +232,12 @@ taskscheduler(void)
 	int i;
 	Task *t;
 
-	printf("task scheduler started\n");
+	// printf("task scheduler started\n");
 
 	taskdebug("scheduler enter");
 	for (;;)
 	{
-		printTasklist(taskrunqueue);
+		// printTasklist(taskrunqueue);
 
 		if (taskcount == 0)
 			exit(taskexitval);
@@ -251,9 +251,9 @@ taskscheduler(void)
 		t->ready = 0;
 		taskrunning = t;
 		tasknswitch++;
-		printf("run %d (%s)\n", t->id, t->name);
+		// printf("run %d (%s)\n", t->id, t->name);
 		contextswitch(&taskschedcontext, &t->context);
-		print("back in scheduler\n");
+		// print("back in scheduler\n");
 		taskrunning = nil;
 		if (t->exiting)
 		{
@@ -266,7 +266,7 @@ taskscheduler(void)
 		}
 	}
 
-	printf("task scheduler exit\n");
+	// printf("task scheduler exit\n");
 }
 
 void **
@@ -407,7 +407,7 @@ void addtask(Tasklist *l, Task *t)
 	l->tail = t;
 	t->next = nil;
 
-	printf("addtask success, name: %s, id: %d\n", t->name, t->id);
+	// printf("addtask success, name: %s, id: %d\n", t->name, t->id);
 }
 
 void deltask(Tasklist *l, Task *t)
