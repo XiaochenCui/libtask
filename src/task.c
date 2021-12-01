@@ -251,9 +251,9 @@ taskscheduler(void)
 		t->ready = 0;
 		taskrunning = t;
 		tasknswitch++;
-		// printf("run %d (%s)\n", t->id, t->name);
+		printf("run %d (%s)\n", t->id, t->name);
 		contextswitch(&taskschedcontext, &t->context);
-		// print("back in scheduler\n");
+		print("back in scheduler\n");
 		taskrunning = nil;
 		if (t->exiting)
 		{
