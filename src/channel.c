@@ -1,6 +1,9 @@
 /* Copyright (c) 2005 Russ Cox, MIT; see COPYRIGHT */
 
 #include "taskimpl.h"
+#include <stdio.h>
+
+void printChannel(Channel *c);
 
 Channel *
 chancreate(int elemsize, int bufsize)
@@ -197,6 +200,8 @@ altcopy(Alt *s, Alt *r)
 	 */
 	if (r)
 	{
+		// printChannel(c);
+
 		cp = c->buf + c->off * c->elemsize;
 		amove(r->v, cp, c->elemsize);
 		--c->nbuf;
@@ -275,6 +280,7 @@ int chanalt(Alt *a)
 			ncan++;
 		}
 	}
+
 	if (ncan)
 	{
 		j = rand() % ncan;
@@ -319,6 +325,29 @@ int chanalt(Alt *a)
 	 * and then set a[0].alt to the one that was executed.
 	 */
 	return a[0].xalt - a;
+}
+
+void printChannel(Channel *c)
+{
+	printf("--- start print channel ---\n");
+	printf("buf content: [nbuf: %d, off: %d] \n", c->nbuf, c->off);
+	printf("buf: ");
+	for (int i = 0; i < c->bufsize; i++)
+	{
+		unsigned long *p = (unsigned long *)c->buf + i;
+		printf("%ld ", *p);
+	}
+	printf("\n");
+	printf("altarray: ");
+	Alt *a = *(c->asend.a);
+	for (int i = 0; i < c->asend.n; i++)
+	{
+		unsigned long *p = (unsigned long *)a->v;
+		printf("%ld ", *p);
+		a = a->xalt[0].xalt;
+	}
+	printf("\n");
+	printf("--- end print channel ---\n");
 }
 
 static int
