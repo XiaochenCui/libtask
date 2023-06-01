@@ -1,20 +1,26 @@
 /* Copyright (c) 2005 Russ Cox, MIT; see COPYRIGHT */
 
 #include "taskimpl.h"
+
+#if defined(_WIN32) || defined(_WIN64)
+#include "compat/fcntl.h"
+#else
 #include <fcntl.h>
+#endif
+
 #include <stdio.h>
 
 int taskdebuglevel;
 int taskcount;
 int tasknswitch;
 int taskexitval;
+int nalltask;
 Task *taskrunning;
 
 Context taskschedcontext;
 Tasklist taskrunqueue;
 
 Task **alltask;
-int nalltask;
 
 static char *argv0;
 static void contextswitch(Context *from, Context *to);
@@ -56,8 +62,7 @@ taskdebug(char *fmt, ...)
 		fprint(fd, "%d._: %s\n", getpid(), buf);
 }
 
-static void
-taskstart(uint y, uint x)
+static void taskstart(uint y, uint x)
 {
 	Task *t;
 	ulong z;
@@ -80,7 +85,6 @@ static Task *
 taskalloc(void (*fn)(void *), void *arg, uint stack)
 {
 	Task *t;
-	sigset_t zero;
 	uint x, y;
 	ulong z;
 
@@ -100,8 +104,6 @@ taskalloc(void (*fn)(void *), void *arg, uint stack)
 
 	/* do a reasonable initialization */
 	memset(&t->context.uc, 0, sizeof t->context.uc);
-	sigemptyset(&zero);
-	sigprocmask(SIG_BLOCK, &zero, &t->context.uc.uc_sigmask);
 
 	/* must initialize with current context */
 	if (getcontext(&t->context.uc) < 0)
@@ -365,13 +367,6 @@ taskmainstart(void *v)
 
 int main(int argc, char **argv)
 {
-	struct sigaction sa, osa;
-
-	memset(&sa, 0, sizeof sa);
-	sa.sa_handler = taskinfo;
-	sa.sa_flags = SA_RESTART;
-	sigaction(SIGQUIT, &sa, &osa);
-
 #ifdef SIGINFO
 	sigaction(SIGINFO, &sa, &osa);
 #endif

@@ -1,8 +1,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
+#if defined(_WIN32) || defined(_WIN64)
+#include "../src/compat/unistd.h"
+#else
 #include <unistd.h>
-#include <task.h>
+#endif
+#include "../src/task.h"
 #include <stdlib.h>
 #include <sys/socket.h>
 
@@ -20,7 +24,7 @@ int*
 mkfd2(int fd1, int fd2)
 {
 	int *a;
-	
+
 	a = malloc(2*sizeof a[0]);
 	if(a == 0){
 		fprintf(stderr, "out of memory\n");
@@ -37,7 +41,7 @@ taskmain(int argc, char **argv)
 	int cfd, fd;
 	int rport;
 	char remote[16];
-	
+
 	if(argc != 4){
 		fprintf(stderr, "usage: tcpproxy localport server remoteport\n");
 		taskexitall(1);
@@ -66,7 +70,7 @@ proxytask(void *v)
 		close(fd);
 		return;
 	}
-	
+
 	fprintf(stderr, "connected to %s:%d\n", server, port);
 
 	taskcreate(rwtask, mkfd2(fd, remotefd), STACK);
@@ -83,10 +87,9 @@ rwtask(void *v)
 	rfd = a[0];
 	wfd = a[1];
 	free(a);
-	
+
 	while((n = fdread(rfd, buf, sizeof buf)) > 0)
 		fdwrite(wfd, buf, n);
 	shutdown(wfd, SHUT_WR);
 	close(rfd);
 }
-

@@ -1,4 +1,4 @@
-#include <task.h>
+#include "../src/task.h"
 
 void
 taskmain(int argc, char *argv[])

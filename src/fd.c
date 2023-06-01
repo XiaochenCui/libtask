@@ -1,6 +1,35 @@
-#include "taskimpl.h"
+#include "../src/taskimpl.h"
+
+#if defined(_WIN32) || defined(_WIN64)
+#include <Winsock2.h>
+#include "compat/fcntl.h"
+#pragma comment(lib, "ws2_32.lib")
+
+int gettimeofday(struct timeval *tp, struct timezone *tzp)
+{
+    // Note: some broken versions only have 8 trailing zero's, the correct epoch has 9 trailing zero's
+    // This magic number is the number of 100 nanosecond intervals since January 1, 1601 (UTC)
+    // until 00:00:00 January 1, 1970
+    static const uint64_t EPOCH = ((uint64_t)116444736000000000ULL);
+
+    SYSTEMTIME system_time;
+    FILETIME file_time;
+    uint64_t time;
+
+    GetSystemTime(&system_time);
+    SystemTimeToFileTime(&system_time, &file_time);
+    time = ((uint64_t)file_time.dwLowDateTime);
+    time += ((uint64_t)file_time.dwHighDateTime) << 32;
+
+    tp->tv_sec = (long)((time - EPOCH) / 10000000L);
+    tp->tv_usec = (long)(system_time.wMilliseconds * 1000);
+    return 0;
+}
+#else
 #include <sys/poll.h>
 #include <fcntl.h>
+#endif
+
 
 enum
 {
@@ -44,7 +73,13 @@ void fdtask(void *v)
 			else
 				ms = 5000;
 		}
-		if (poll(pollfd, npollfd, ms) < 0)
+
+#if defined(_WIN32) || defined(_WIN64)
+        if (WSAPoll(pollfd, npollfd, ms) < 0)
+#else
+        if (poll(pollfd, npollfd, ms) < 0)
+#endif
+
 		{
 			if (errno == EINTR)
 				continue;
@@ -63,7 +98,6 @@ void fdtask(void *v)
 				polltask[i] = polltask[npollfd];
 			}
 		}
-
 		now = nsec();
 		while ((t = sleeping.head) && now >= t->alarmtime)
 		{
@@ -207,7 +241,12 @@ int fdwrite(int fd, void *buf, int n)
 // 		O_DSYNC and O_SYNC flags; see BUGS, below.
 int fdnoblock(int fd)
 {
-	return fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NONBLOCK);
+
+#if defined(_WIN32) || defined(_WIN64)
+    return fd;
+#else
+    return fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NONBLOCK);
+#endif
 }
 
 static uvlong

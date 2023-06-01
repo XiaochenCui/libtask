@@ -1,9 +1,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
-#include <unistd.h>
 #include <stdlib.h>
-#include <task.h>
+#if defined(_WIN32) || defined(_WIN64)
+#include "../src/compat/unistd.h"
+#else
+#include <unistd.h>
+#endif
+#include "../src/task.h"
 
 enum { STACK = 32768 };
 
@@ -21,7 +25,7 @@ void
 taskmain(int argc, char **argv)
 {
 	int i, n;
-	
+
 	c = chancreate(sizeof(unsigned long), 0);
 
 	n = 0;
