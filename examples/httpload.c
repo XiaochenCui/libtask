@@ -1,8 +1,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
+#if defined(_WIN32) || defined(_WIN64)
+#include "../src/compat/unistd.h"
+#else
 #include <unistd.h>
-#include <task.h>
+#endif
+#include "../src/task.h"
 #include <stdlib.h>
 
 enum
@@ -19,7 +23,7 @@ void
 taskmain(int argc, char **argv)
 {
 	int i, n;
-	
+
 	if(argc != 4){
 		fprintf(stderr, "usage: httpload n server url\n");
 		taskexitall(1);
@@ -41,7 +45,7 @@ fetchtask(void *v)
 {
 	int fd, n;
 	char buf[512];
-	
+
 	fprintf(stderr, "starting...\n");
 	for(;;){
 		if((fd = netdial(TCP, server, 80)) < 0){

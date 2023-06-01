@@ -1,7 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#if defined(_WIN32) || defined(_WIN64)
+#include "../src/compat/unistd.h"
+#else
 #include <unistd.h>
-#include <task.h>
+#endif
+#include "../src/task.h"
 
 Channel *c;
 

@@ -26,19 +26,43 @@
 
 #include <errno.h>
 #include <stdlib.h>
+#if defined(_WIN32) || defined(_WIN64)
+#include "compat/unistd.h"
+#else
 #include <unistd.h>
+#endif
 #include <string.h>
 #include <assert.h>
 #include <time.h>
+#if defined(_WIN32) || defined(_WIN64)
+#include "compat/sys/time.h"
+#else
 #include <sys/time.h>
+#endif
 #include <sys/types.h>
+
+#if defined(_WIN32) || defined(_WIN64)
+#include "compat/wait.h"
+#else
 #include <sys/wait.h>
-#include <sched.h>
+#endif
+
 #include <signal.h>
 #if USE_UCONTEXT
+
+#if defined(_WIN32) || defined(_WIN64)
+#include "ucontext.h"
+#else
 #include <ucontext.h>
 #endif
+
+#endif
+
+#if defined(_WIN32) || defined(_WIN64)
+#include "compat/utsname.h"
+#else
 #include <sys/utsname.h>
+#endif
 #include <inttypes.h>
 #include "task.h"
 
@@ -99,7 +123,7 @@ extern	void		makecontext(ucontext_t*, void(*)(), int, ...);
 #		include "amd64-ucontext.h"
 #	else
 #		include "power-ucontext.h"
-#	endif	
+#	endif
 #endif
 
 #if defined(__OpenBSD__)

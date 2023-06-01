@@ -14,8 +14,7 @@ enum
 	FlagUnsigned = 1<<2,
 };
 
-static char*
-printstr(char *dst, char *edst, char *s, int size)
+static char *printstr(char *dst, char *edst, char *s, int size)
 {
 	int l, n, sign;
 
@@ -45,9 +44,8 @@ printstr(char *dst, char *edst, char *s, int size)
 	}
 	return dst+n;
 }
-	
-char*
-vseprint(char *dst, char *edst, char *fmt, va_list arg)
+
+char *vseprint(char *dst, char *edst, char *fmt, va_list arg)
 {
 	int fl, size, sign, base;
 	char *p, *w;
@@ -105,7 +103,7 @@ vseprint(char *dst, char *edst, char *fmt, va_list arg)
 					char buf[30], *p;
 					int neg, zero;
 					uvlong luv;
-				
+
 					if(fl&FlagLongLong){
 						if(fl&FlagUnsigned)
 							luv = va_arg(arg, uvlong);
@@ -124,7 +122,7 @@ vseprint(char *dst, char *edst, char *fmt, va_list arg)
 								luv = va_arg(arg, int);
 						}
 					}
-				
+
 					p = buf+sizeof buf;
 					neg = 0;
 					zero = 0;
@@ -143,7 +141,7 @@ vseprint(char *dst, char *edst, char *fmt, va_list arg)
 						*--p = 'x';
 						*--p = '0';
 					}
-					if(base == 8 || zero) 
+					if(base == 8 || zero)
 						*--p = '0';
 					w = printstr(w, edst, p, size*sign);
 					goto break2;
@@ -159,7 +157,7 @@ vseprint(char *dst, char *edst, char *fmt, va_list arg)
 				case 'r':
 					w = printstr(w, edst, strerror(errno), size*sign);
 					goto break2;
-				default:	
+				default:
 					p = "X*verb*";
 					goto break2;
 				}
@@ -168,20 +166,18 @@ vseprint(char *dst, char *edst, char *fmt, va_list arg)
 			break;
 		}
 	}
-	
+
 	assert(w < edst);
 	*w = 0;
 	return dst;
 }
 
-char*
-vsnprint(char *dst, uint n, char *fmt, va_list arg)
+char *vsnprint(char *dst, uint n, char *fmt, va_list arg)
 {
 	return vseprint(dst, dst+n, fmt, arg);
 }
 
-char*
-snprint(char *dst, uint n, char *fmt, ...)
+char *snprint(char *dst, uint n, char *fmt, ...)
 {
 	va_list arg;
 
@@ -191,8 +187,7 @@ snprint(char *dst, uint n, char *fmt, ...)
 	return dst;
 }
 
-char*
-seprint(char *dst, char *edst, char *fmt, ...)
+char *seprint(char *dst, char *edst, char *fmt, ...)
 {
 	va_list arg;
 
@@ -202,8 +197,7 @@ seprint(char *dst, char *edst, char *fmt, ...)
 	return dst;
 }
 
-int
-vfprint(int fd, char *fmt, va_list arg)
+int vfprint(int fd, char *fmt, va_list arg)
 {
 	char buf[256];
 
@@ -211,14 +205,12 @@ vfprint(int fd, char *fmt, va_list arg)
 	return write(fd, buf, strlen(buf));
 }
 
-int
-vprint(char *fmt, va_list arg)
+int vprint(char *fmt, va_list arg)
 {
 	return vfprint(1, fmt, arg);
 }
 
-int
-fprint(int fd, char *fmt, ...)
+int fprint(int fd, char *fmt, ...)
 {
 	int n;
 	va_list arg;
@@ -229,8 +221,7 @@ fprint(int fd, char *fmt, ...)
 	return n;
 }
 
-int
-print(char *fmt, ...)
+int print(char *fmt, ...)
 {
 	int n;
 	va_list arg;
@@ -241,12 +232,8 @@ print(char *fmt, ...)
 	return n;
 }
 
-char*
-strecpy(char *dst, char *edst, char *src)
+char *strecpy(char *dst, char *edst, char *src)
 {
 	*printstr(dst, edst, src, 0) = 0;
 	return dst;
 }
-
-
-

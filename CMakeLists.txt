@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
 
-set(CMAKE_C_COMPILER "gcc-9")
-
 project(LIBTASK C)
 
 set(C_STANDARD 99)
@@ -25,3 +23,4 @@ foreach (TARGET ${TARGET_LIST})
     target_include_directories(${TARGET} PRIVATE src)
     target_link_libraries(${TARGET} task)
 endforeach()
+libtask
