@@ -23,4 +23,3 @@ foreach (TARGET ${TARGET_LIST})
     target_include_directories(${TARGET} PRIVATE src)
     target_link_libraries(${TARGET} task)
 endforeach()
-libtask
