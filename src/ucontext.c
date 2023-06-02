@@ -24,6 +24,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+#if defined(_WIN32) || defined(_WIN64)
 int getcontext(ucontext_t *ucp)
 {
 	int ret;
@@ -99,3 +100,4 @@ int swapcontext(ucontext_t *oucp, const ucontext_t *ucp)
 	}
 	return ret;
 }
+#endif

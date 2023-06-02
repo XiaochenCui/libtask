@@ -367,6 +367,15 @@ taskmainstart(void *v)
 
 int main(int argc, char **argv)
 {
+#if !defined(_WIN32) || !defined(_WIN64)
+    struct sigaction sa, osa;
+
+    memset(&sa, 0, sizeof sa);
+    sa.sa_handler = taskinfo;
+    sa.sa_flags = SA_RESTART;
+    sigaction(SIGQUIT, &sa, &osa);
+#endif
+
 #ifdef SIGINFO
 	sigaction(SIGINFO, &sa, &osa);
 #endif
