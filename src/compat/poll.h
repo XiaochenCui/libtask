@@ -22,12 +22,6 @@
 /* Type used for the number of file descriptors. */
 typedef unsigned long int nfds_t;
 
-/* Data structure describing a polling request. */
-struct pollfd {
-	int fd; /* file descriptor */
-	short events; /* requested events */
-	short revents; /* returned events */
-};
 
 /* Event types that can be polled */
 #define POLLIN 0x001 /* There is data to read. */

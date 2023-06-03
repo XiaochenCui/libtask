@@ -6,7 +6,7 @@
 #ifndef _WIN32
 #include_next <netinet/in.h>
 #else
-#include <win32netcompat.h>
+#include "../win32netcompat.h"
 #endif
 
 #ifndef LIBCRYPTOCOMPAT_NETINET_IN_H

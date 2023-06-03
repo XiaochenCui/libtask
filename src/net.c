@@ -1,10 +1,18 @@
 #include "taskimpl.h"
 #include <sys/types.h>
-#include <sys/socket.h>
+#if defined(_WIN32) || defined(_WIN64)
+#include "compat/netdb.h"
+#include "compat/sys/socket.h"
+#include "compat/netinet/in.h"
+#include "compat/netinet/tcp.h"
+#include "compat/poll.h"
+#else
 #include <netdb.h>
+#include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <sys/poll.h>
+#endif
 
 int
 netannounce(int istcp, char *server, int port)
@@ -30,7 +38,7 @@ netannounce(int istcp, char *server, int port)
 		taskstate("socket failed");
 		return -1;
 	}
-	
+
 	/* set reuse flag for tcp */
 	if(istcp && getsockopt(fd, SOL_SOCKET, SO_TYPE, (void*)&n, &sn) >= 0){
 		n = 1;
@@ -58,7 +66,7 @@ netaccept(int fd, char *server, int *port)
 	struct sockaddr_in sa;
 	uchar *ip;
 	socklen_t len;
-	
+
 	fdwait(fd, 'r');
 
 	taskstate("netaccept");
@@ -133,7 +141,7 @@ netlookup(char *name, uint32_t *ip)
 
 	if(parseip(name, ip) >= 0)
 		return 0;
-	
+
 	/* BUG - Name resolution blocks.  Need a non-blocking DNS. */
 	taskstate("netlookup");
 	if((he = gethostbyname(name)) != 0){
@@ -141,7 +149,7 @@ netlookup(char *name, uint32_t *ip)
 		taskstate("netlookup succeeded");
 		return 0;
 	}
-	
+
 	taskstate("netlookup failed");
 	return -1;
 }
@@ -153,7 +161,7 @@ netdial(int istcp, char *server, int port)
 	uint32_t ip;
 	struct sockaddr_in sa;
 	socklen_t sn;
-	
+
 	if(netlookup(server, &ip) < 0)
 		return -1;
 
@@ -170,7 +178,7 @@ netdial(int istcp, char *server, int port)
 		n = 1;
 		setsockopt(fd, SOL_SOCKET, SO_BROADCAST, &n, sizeof n);
 	}
-	
+
 	/* start connecting */
 	memset(&sa, 0, sizeof sa);
 	memmove(&sa.sin_addr, &ip, 4);
@@ -182,14 +190,14 @@ netdial(int istcp, char *server, int port)
 		return -1;
 	}
 
-	/* wait for finish */	
+	/* wait for finish */
 	fdwait(fd, 'w');
 	sn = sizeof sa;
 	if(getpeername(fd, (struct sockaddr*)&sa, &sn) >= 0){
 		taskstate("connect succeeded");
 		return fd;
 	}
-	
+
 	/* report error */
 	sn = sizeof n;
 	getsockopt(fd, SOL_SOCKET, SO_ERROR, (void*)&n, &sn);
@@ -200,4 +208,3 @@ netdial(int istcp, char *server, int port)
 	errno = n;
 	return -1;
 }
-
