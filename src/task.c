@@ -367,7 +367,7 @@ taskmainstart(void *v)
 
 int main(int argc, char **argv)
 {
-#if !defined(_WIN32) || !defined(_WIN64)
+#if !defined(_WIN32)
     struct sigaction sa, osa;
 
     memset(&sa, 0, sizeof sa);
