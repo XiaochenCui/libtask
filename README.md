@@ -1,7 +1,7 @@
 # Libtask
 
 **Libtask** is a simple coroutine library.  It runs on Linux (ARM, MIPS, and x86),
-FreeBSD (x86), OS X (PowerPC x86, and x86-64), and SunOS Solaris (Sparc),
+FreeBSD (x86), OS X (PowerPC x86, and x86-64), SunOS Solaris (Sparc), **Windows**
 and is easy to port to other systems.
 
 Libtask gives the programmer the illusion of threads, but
@@ -178,10 +178,21 @@ Other examples are:
 
 ## Building
 
-To build, run make.  You can run make install to copy task.h and
-libtask.a to the appropriate places in /usr/local.  Then you
-should be able to just link with -ltask in your programs
-that use it.
+To build, run **cmake**. You can copy task.h and
+libtask.a to the appropriate places in /usr/local. Then you
+should be able to just link with -ltask in your programs that use it.
+
+```shell
+mkdir build
+cd build
+# Windows
+cmake .. -D CMAKE_GENERATOR_PLATFORM=Win32
+# Linux/Unix
+cmake ..
+cmake --build .
+```
+
+`libtask.a` or `libtask.lib` is in **lib** directory.
 
 On SunOS Solaris machines, run makesun instead of just make.
 
