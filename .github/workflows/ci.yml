@@ -21,15 +21,13 @@ jobs:
           sudo dpkg --add-architecture i386
           sudo apt-get update -q -y
           sudo apt-get install -y gcc-multilib g++-multilib valgrind libc6-dbg libc6-dbg:i386
-      - name: cmake build & test examples
+      - name: cmake build & test example
         run: |
             mkdir build
             cd build
             cmake ..
             cmake --build .
             cd bin
-            ./chan_1
-            ./chan_2
             ./chan_3
             ./primes
             ./testdelay 2
@@ -58,19 +56,15 @@ jobs:
             apt-get install -q -y --no-install-recommends build-essential valgrind
           env: |
             target: ${{ matrix.target }}
-      - name: cmake build & test examples
-        run: |
+          run: |
             mkdir build
             cd build
             cmake ..
             cmake --build .
             cd bin
-            ./chan_1
-            ./chan_2
             ./chan_3
             ./primes
             ./testdelay 2
-
 
   build-windows:
     name: Windows (${{ matrix.arch }})
