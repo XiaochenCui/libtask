@@ -48,6 +48,7 @@ jobs:
           cd build
           cmake .. -DCMAKE_C_COMPILER=${{ matrix.config.cc }}
           cmake --build .
+          cd bin
           ./chan_3
           ./primes
           ./testdelay 2
