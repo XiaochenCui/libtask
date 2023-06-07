@@ -2,11 +2,12 @@ cmake_minimum_required(VERSION 3.10)
 
 project(LIBTASK C)
 
+include(CMakeDependentOption)
+include(CheckCCompilerFlag)
+
 set(C_STANDARD 89)
 
-if(WIN32)
-    set(CMAKE_GENERATOR_PLATFORM Win32)
-endif()
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 if(UNIX)
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g ")

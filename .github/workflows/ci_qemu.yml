@@ -34,7 +34,6 @@ jobs:
         env:
           QEMU_SRC: "http://archive.ubuntu.com/ubuntu/pool/universe/q/qemu"
           QEMU_VER: "qemu-user-static_7\\.0+dfsg-.*_amd64.deb$"
-          QEMU_STACK_SIZE: 8388608
         run: |
           DEB=`curl -s $QEMU_SRC/ | grep -o -E 'href="([^"#]+)"' | cut -d'"' -f2 | grep $QEMU_VER | tail -1`
           wget $QEMU_SRC/$DEB
@@ -47,10 +46,10 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake .. -DBUILD_TESTING=ON -DCMAKE_C_COMPILER=${{ matrix.config.cc }}
+          cmake .. -DCMAKE_C_COMPILER=${{ matrix.config.cc }}
       - name: Build
         run: |
-            cmake --build .
+            cmake --build . --config Debug
       - name: Test
         run: |
             ${{ matrix.config.qemu }} ./chan_3
