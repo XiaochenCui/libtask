@@ -28,7 +28,7 @@ jobs:
           - {target: ppc64 (u64 slots),   toolchain: gcc-powerpc64-linux-gnu,   cc: powerpc64-linux-gnu-gcc,    qemu: qemu-ppc64-static}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
       - name: Install QEMU
         # this ensure install latest qemu on ubuntu, apt get version is old
         env:
@@ -42,19 +42,15 @@ jobs:
         run: |
           sudo apt update
           sudo apt install ${{ matrix.config.toolchain }} -y
-      - name: Configure with ${{ matrix.config.cc }}
+      - name: Configure build and Test with ${{ matrix.config.cc }}
         run: |
           mkdir build
           cd build
           cmake .. -DCMAKE_C_COMPILER=${{ matrix.config.cc }}
-      - name: Build
-        run: |
-            cmake --build . --config Debug
-      - name: Test
-        run: |
-            ${{ matrix.config.qemu }} ./chan_3
-            ${{ matrix.config.qemu }} ./primes
-            ${{ matrix.config.qemu }} ./testdelay 2
-            ./chan_3
-            ./primes
-            ./testdelay 2
+          cmake --build . --config Debug
+          ${{ matrix.config.qemu }} ./chan_3
+          ${{ matrix.config.qemu }} ./primes
+          ${{ matrix.config.qemu }} ./testdelay 2
+          ./chan_3
+          ./primes
+          ./testdelay 2
