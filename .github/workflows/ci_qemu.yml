@@ -47,10 +47,7 @@ jobs:
           mkdir build
           cd build
           cmake .. -DCMAKE_C_COMPILER=${{ matrix.config.cc }}
-          cmake --build . --config Debug
-          ${{ matrix.config.qemu }} ./chan_3
-          ${{ matrix.config.qemu }} ./primes
-          ${{ matrix.config.qemu }} ./testdelay 2
+          cmake --build .
           ./chan_3
           ./primes
           ./testdelay 2
