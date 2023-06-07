@@ -4,6 +4,7 @@ project(LIBTASK C)
 
 include(CMakeDependentOption)
 include(CheckCCompilerFlag)
+include(GNUInstallDirs)
 
 set(C_STANDARD 89)
 
