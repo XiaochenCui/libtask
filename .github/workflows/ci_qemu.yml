@@ -4,41 +4,58 @@ on: [push, pull_request]
 
 jobs:
   build-qemu:
-    name: ${{ matrix.target }}
+    name: ${{ matrix.config.target }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - target: arm
-            arch: armv7
-          - target: aarch64
-            arch: aarch64
-          - target: ppc64v2
-            arch: ppc64le
-          - target: riscv64
-            arch: riscv64
-          - target: s390x
-            arch: s390x
+        config:
+          - {target: arm,     toolchain: gcc-arm-linux-gnueabi,     cc: arm-linux-gnueabi-gcc,      qemu: qemu-arm-static     }
+          - {target: armhf,   toolchain: gcc-arm-linux-gnueabihf,   cc: arm-linux-gnueabihf-gcc,    qemu: qemu-arm-static     }
+          - {target: aarch64, toolchain: gcc-aarch64-linux-gnu,     cc: aarch64-linux-gnu-gcc,      qemu: qemu-aarch64-static }
+          - {target: riscv64, toolchain: gcc-riscv64-linux-gnu,     cc: riscv64-linux-gnu-gcc,      qemu: qemu-riscv64-static }
+          - {target: ppc,     toolchain: gcc-powerpc-linux-gnu,     cc: powerpc-linux-gnu-gcc,      qemu: qemu-ppc-static     }
+          - {target: ppc64,   toolchain: gcc-powerpc64-linux-gnu,   cc: powerpc64-linux-gnu-gcc,    qemu: qemu-ppc64-static   }
+          - {target: ppc64le, toolchain: gcc-powerpc64le-linux-gnu, cc: powerpc64le-linux-gnu-gcc,  qemu: qemu-ppc64le-static }
+          - {target: s390x,   toolchain: gcc-s390x-linux-gnu,       cc: s390x-linux-gnu-gcc,        qemu: qemu-s390x-static   }
+          - {target: mips,    toolchain: gcc-mips-linux-gnu,          cc: mips-linux-gnu-gcc,         qemu: qemu-mips-static     }
+          - {target: mips64,  toolchain: gcc-mips64-linux-gnuabi64,   cc: mips64-linux-gnuabi64-gcc,  qemu: qemu-mips64-static   }
+          - {target: mipsel,  toolchain: gcc-mipsel-linux-gnu,        cc: mipsel-linux-gnu-gcc,       qemu: qemu-mipsel-static   }
+          - {target: mips64el,toolchain: gcc-mips64el-linux-gnuabi64, cc: mips64el-linux-gnuabi64-gcc,qemu: qemu-mips64el-static }
+          - {target: arm (u64 slots),     toolchain: gcc-arm-linux-gnueabi,     cc: arm-linux-gnueabi-gcc,      qemu: qemu-arm-static}
+          - {target: aarch64 (u64 slots), toolchain: gcc-aarch64-linux-gnu,     cc: aarch64-linux-gnu-gcc,      qemu: qemu-aarch64-static}
+          - {target: ppc (u64 slots),     toolchain: gcc-powerpc-linux-gnu,     cc: powerpc-linux-gnu-gcc,      qemu: qemu-ppc-static}
+          - {target: ppc64 (u64 slots),   toolchain: gcc-powerpc64-linux-gnu,   cc: powerpc64-linux-gnu-gcc,    qemu: qemu-ppc64-static}
+
     steps:
       - uses: actions/checkout@v3
-      - uses: uraimo/run-on-arch-action@v2
-        with:
-          arch: ${{ matrix.arch }}
-          distro: ubuntu_latest
-          install: |
-            apt-get update -q -y
-            apt-get install -q -y --no-install-recommends cmake build-essential
-          env: |
-            # Valgrind on arm will fail if the stack size is larger than 8MB.
-            # Set QEMUs stack size to 8MB since Github runners use 16MB default.
-            QEMU_STACK_SIZE: 8388608
-          run: |
-            mkdir build
-            cd build
-            cmake ..
+      - name: Install QEMU
+        # this ensure install latest qemu on ubuntu, apt get version is old
+        env:
+          QEMU_SRC: "http://archive.ubuntu.com/ubuntu/pool/universe/q/qemu"
+          QEMU_VER: "qemu-user-static_7\\.0+dfsg-.*_amd64.deb$"
+          QEMU_STACK_SIZE: 8388608
+        run: |
+          DEB=`curl -s $QEMU_SRC/ | grep -o -E 'href="([^"#]+)"' | cut -d'"' -f2 | grep $QEMU_VER | tail -1`
+          wget $QEMU_SRC/$DEB
+          sudo dpkg -i $DEB
+      - name: Install ${{ matrix.config.toolchain }}
+        run: |
+          sudo apt update
+          sudo apt install ${{ matrix.config.toolchain }} -y
+      - name: Configure with ${{ matrix.config.cc }}
+        run: |
+          mkdir build
+          cd build
+          cmake .. -DBUILD_TESTING=ON -DCMAKE_C_COMPILER=${{ matrix.config.cc }}
+      - name: Build
+        run: |
             cmake --build .
-            cd bin
+      - name: Test
+        run: |
+            ${{ matrix.config.qemu }} ./chan_3
+            ${{ matrix.config.qemu }} ./primes
+            ${{ matrix.config.qemu }} ./testdelay 2
             ./chan_3
             ./primes
             ./testdelay 2
