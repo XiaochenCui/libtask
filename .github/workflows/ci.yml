@@ -5,7 +5,7 @@ on: [push, pull_request]
 jobs:
   build:
     name: ${{ matrix.target }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
       matrix:
@@ -58,7 +58,8 @@ jobs:
             apt-get install -q -y --no-install-recommends build-essential valgrind
           env: |
             target: ${{ matrix.target }}
-          run: |
+      - name: cmake build & test examples
+        run: |
             mkdir build
             cd build
             cmake ..
