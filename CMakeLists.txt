@@ -9,6 +9,7 @@ include(GNUInstallDirs)
 set(C_STANDARD 89)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+option(QEMU "build for qemu" ON)
 
 if(UNIX)
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g ")
