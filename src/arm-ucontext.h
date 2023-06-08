@@ -1,11 +1,18 @@
 #define	setcontext(u)	setmcontext(&(u)->uc_mcontext)
 #define	getcontext(u)	getmcontext(&(u)->uc_mcontext)
+typedef struct mcontext mcontext_t;
+typedef struct ucontext ucontext_t;
 
-typedef struct mcontext {
+extern	int		swapcontext(ucontext_t*, const ucontext_t*);
+extern	void		makecontext(ucontext_t*, void(*)(), int, ...);
+extern	int		getmcontext(mcontext_t*);
+extern	void		setmcontext(const mcontext_t*);
+
+struct mcontext {
 	int gregs[16];
-} mcontext_t;
+};
 
-typedef struct ucontext {
+struct ucontext {
 	/*
 	 * Keep the order of the first two fields. Also,
 	 * keep them the first two fields in the structure.
@@ -20,7 +27,4 @@ typedef struct ucontext {
 	struct __ucontext *uc_link;
 	stack_t		uc_stack;
 	int		__spare__[8];
-} ucontext_t;
-
-extern	int getmcontext(mcontext_t*);
-extern	void setmcontext(const mcontext_t*);
+};
