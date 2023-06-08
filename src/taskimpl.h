@@ -143,17 +143,12 @@ extern pid_t rfork_thread(int, void*, int(*)(void*), void*);
 #endif
 
 #if defined(__arm__) && defined(__linux__)
-typedef struct mcontext mcontext_t;
-struct mcontext
-{
-    int gregs[16];
-};
 
 extern int getmcontext(mcontext_t *);
 extern void setmcontext(const mcontext_t *);
 
-#define setcontext(u) setmcontext(&(u)->uc_mcontext)
-#define getcontext(u) getmcontext(&(u)->uc_mcontext)
+#define setcontext(u) setmcontext((void *)&((u)->uc_mcontext.arm_r0))
+#define getcontext(u) getmcontext((void *)&((u)->uc_mcontext.arm_r0))
 #endif
 
 #if defined(__mips__)
