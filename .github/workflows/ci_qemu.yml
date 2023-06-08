@@ -28,7 +28,7 @@ jobs:
           distro:  ubuntu20.04
           install: |
             apt-get update -q -y
-            apt-get install -q -y --no-install-recommends cmake build-essential gcc-4.7
+            apt-get install -q -y cmake build-essential
           env: |
             # Valgrind on arm will fail if the stack size is larger than 8MB.
             # Set QEMUs stack size to 8MB since Github runners use 16MB default.
