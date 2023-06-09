@@ -10,23 +10,33 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - target: arm
+            arch: armv6
+            distro: buster
+          - target: arm
+            arch: armv7
+            distro: archarm_latest
           - target: aarch64
             arch: aarch64
+            distro: ubuntu_latest
           - target: ppc64v2
             arch: ppc64le
+            distro: ubuntu_latest
           - target: riscv64
             arch: riscv64
+            distro: ubuntu_latest
           - target: s390x
             arch: s390x
+            distro: ubuntu_latest
     steps:
       - uses: actions/checkout@v3
       - uses: uraimo/run-on-arch-action@v2
         with:
           arch: ${{ matrix.arch }}
-          distro:  ubuntu_latest
+          distro:  ${{ matrix.distro }}
           install: |
             apt-get update -q -y
-            apt-get install -q -y --no-install-recommends cmake build-essential
+            apt-get install -q -y cmake build-essential
           env: |
             # Valgrind on arm will fail if the stack size is larger than 8MB.
             # Set QEMUs stack size to 8MB since Github runners use 16MB default.
