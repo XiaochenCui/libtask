@@ -1,4 +1,4 @@
-name: CI-Qemu
+name: arch64 & others by qemu
 
 on: [push, pull_request]
 
@@ -23,7 +23,7 @@ jobs:
       - uses: uraimo/run-on-arch-action@v2
         with:
           arch: ${{ matrix.arch }}
-          distro: ubuntu_latest
+          distro:  ubuntu_latest
           install: |
             apt-get update -q -y
             apt-get install -q -y --no-install-recommends cmake build-essential
