@@ -23,6 +23,7 @@
 #ifndef UCONTEXT_H
 #define UCONTEXT_H
 
+#if defined(_WIN32) || defined(_WIN64)
 #include <windows.h>
 
 #ifdef __cplusplus
@@ -62,4 +63,5 @@ int swapcontext(ucontext_t *, const ucontext_t *);
 }
 #endif
 
+#endif
 #endif /* UCONTEXT_H */

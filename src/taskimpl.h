@@ -26,36 +26,29 @@
 
 #include <errno.h>
 #include <stdlib.h>
-#if defined(_WIN32) || defined(_WIN64)
-#include "compat/unistd.h"
-#else
-#include <unistd.h>
-#endif
-#include <string.h>
-#include <assert.h>
-#include <time.h>
-#if defined(_WIN32) || defined(_WIN64)
-#include "compat/sys/time.h"
-#else
-#include <sys/time.h>
-#endif
-#include <sys/types.h>
 
 #if defined(_WIN32) || defined(_WIN64)
+#include "compat/unistd.h"
+#include "compat/sys/time.h"
 #include "compat/wait.h"
 #else
+#include <unistd.h>
+#include <sys/time.h>
 #include <sys/wait.h>
 #endif
 
+#include <string.h>
+#include <assert.h>
+#include <time.h>
+#include <sys/types.h>
+
 #include <signal.h>
 #if USE_UCONTEXT
-
 #if defined(_WIN32) || defined(_WIN64)
-#include "ucontext.h"
+    #include "ucontext.h"
 #else
-#include <ucontext.h>
+    #include <ucontext.h>
 #endif
-
 #endif
 
 #if defined(_WIN32) || defined(_WIN64)
@@ -121,6 +114,8 @@ extern	void		makecontext(ucontext_t*, void(*)(), int, ...);
 #		include "386-ucontext.h"
 #	elif defined(__x86_64__)
 #		include "amd64-ucontext.h"
+#	elif defined(__arm__)
+#		include "arm-ucontext.h"
 #	else
 #		include "power-ucontext.h"
 #	endif
@@ -147,11 +142,12 @@ extern pid_t rfork_thread(int, void*, int(*)(void*), void*);
 #	include "sparc-ucontext.h"
 #endif
 
-#if defined(__arm__)
-int getmcontext(mcontext_t*);
-void setmcontext(const mcontext_t*);
-#define	setcontext(u)	setmcontext(&(u)->uc_mcontext)
-#define	getcontext(u)	getmcontext(&(u)->uc_mcontext)
+#if defined(__arm__) && defined(__linux__)
+extern int getmcontext(mcontext_t *);
+extern void setmcontext(const mcontext_t *);
+
+#define setcontext(u) setmcontext((void *)&((u)->uc_mcontext.arm_r0))
+#define getcontext(u) getmcontext((void *)&((u)->uc_mcontext.arm_r0))
 #endif
 
 #if defined(__mips__)

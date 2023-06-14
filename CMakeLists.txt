@@ -2,10 +2,14 @@ cmake_minimum_required(VERSION 3.10)
 
 project(LIBTASK C)
 
-set(C_STANDARD 99)
+set(C_STANDARD 89)
 
-# -g for debugging
-set(CMAKE_C_FLAGS "-g")
+if(UNIX)
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g ")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -fomit-frame-pointer ")
+endif()
+
+message("Generated with config types: ${CMAKE_CONFIGURATION_TYPES}")
 
 set(BUILD_DIR ${CMAKE_SOURCE_DIR}/build)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BUILD_DIR}/bin)
@@ -17,10 +21,9 @@ file(GLOB lib_files
 )
 add_library(task STATIC ${lib_files})
 
-set(TARGET_LIST primes tcpproxy helloworld chan_1 chan_2 chan_3)
+set(TARGET_LIST testdelay primes helloworld chan_1 chan_2 chan_3)
 foreach (TARGET ${TARGET_LIST})
     add_executable(${TARGET} examples/${TARGET}.c)
     target_include_directories(${TARGET} PRIVATE src)
     target_link_libraries(${TARGET} task)
 endforeach()
-libtask

@@ -3,13 +3,13 @@
 #include <errno.h>
 #if defined(_WIN32) || defined(_WIN64)
 #include "../src/compat/unistd.h"
+#include "../src/compat/sys/socket.h"
 #else
 #include <unistd.h>
+#include <sys/socket.h>
 #endif
 #include "../src/task.h"
 #include <stdlib.h>
-#include <sys/socket.h>
-
 enum
 {
 	STACK = 32768

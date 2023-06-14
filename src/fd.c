@@ -75,11 +75,9 @@ void fdtask(void *v)
 		}
 
 #if defined(_WIN32) || defined(_WIN64)
-        if (WSAPoll(pollfd, npollfd, ms) < 0)
+      /* if (WSAPoll(pollfd, npollfd, ms) < 0) */
 #else
         if (poll(pollfd, npollfd, ms) < 0)
-#endif
-
 		{
 			if (errno == EINTR)
 				continue;
@@ -98,6 +96,7 @@ void fdtask(void *v)
 				polltask[i] = polltask[npollfd];
 			}
 		}
+#endif
 		now = nsec();
 		while ((t = sleeping.head) && now >= t->alarmtime)
 		{

@@ -1,5 +1,7 @@
-Libtask is a simple coroutine library.  It runs on Linux (ARM, MIPS, and x86),
-FreeBSD (x86), OS X (PowerPC x86, and x86-64), and SunOS Solaris (Sparc),
+# Libtask
+
+**Libtask** is a simple coroutine library.  It runs on Linux (ARM, MIPS, and x86),
+FreeBSD (x86), OS X (PowerPC x86, and x86-64), SunOS Solaris (Sparc), **Windows**
 and is easy to port to other systems.
 
 Libtask gives the programmer the illusion of threads, but
@@ -12,32 +14,32 @@ the CPU.  Most of the functions provided in task.h do have
 the possibility of going to sleep.  Programs using the task
 functions should #include <task.h>.
 
---- Basic task manipulation
+## Basic task manipulation
 
-int taskcreate(void (*f)(void*arg), void *arg, unsigned int stacksize);
+`int taskcreate(void (*f)(void*arg), void *arg, unsigned int stacksize);`
 
  Create a new task running f(arg) on a stack of size stacksize.
 
-void tasksystem(void);
+`void tasksystem(void);`
 
  Mark the current task as a "system" task.  These are ignored
  for the purposes of deciding the program is done running
  (see taskexit next).
 
-void taskexit(int status);
+`void taskexit(int status);`
 
  Exit the current task.  If this is the last non-system task,
  exit the entire program using the given exit status.
 
-void taskexitall(int status);
+`void taskexitall(int status);`
 
  Exit the entire program, using the given exit status.
 
-void taskmain(int argc, char *argv[]);
+`void taskmain(int argc, char *argv[]);`
 
  Write this function instead of main.  Libtask provides its own main.
 
-int taskyield(void);
+`int taskyield(void);`
 
  Explicitly give up the CPU.  The current task will be scheduled
  again once all the other currently-ready tasks have a chance
@@ -45,33 +47,33 @@ int taskyield(void);
  current task was waiting.  (Zero means there are no other tasks
  trying to run.)
 
-int taskdelay(unsigned int ms)
+`int taskdelay(unsigned int ms);`
 
  Explicitly give up the CPU for at least ms milliseconds.
  Other tasks continue to run during this time.
 
-void** taskdata(void);
+`void** taskdata(void);`
 
  Return a pointer to a single per-task void* pointer.
  You can use this as a per-task storage place.
 
-void needstack(int n);
+`void needstack(int n);`
 
  Tell the task library that you need at least n bytes left
  on the stack.  If you don't have it, the task library will call abort.
  (It's hard to figure out how big stacks should be.  I usually make
  them really big (say 32768) and then don't worry about it.)
 
-void taskname(char*, ...);
+`void taskname(char*, ...);`
 
  Takes an argument list like printf.  Sets the current task's name.
 
-char* taskgetname(void);
+`char* taskgetname(void);`
 
  Returns the current task's name.  Is the actual buffer; do not free.
 
-void taskstate(char*, ...);
-char* taskgetstate(void);
+`void taskstate(char*, ...);`
+`char* taskgetstate(void);`
 
  Like taskname and taskgetname but for the task state.
 
@@ -79,31 +81,31 @@ char* taskgetstate(void);
  it will print a list of all its tasks and their names and states.
  This is useful for debugging why your program isn't doing anything!
 
-unsigned int taskid(void);
+`unsigned int taskid(void);`
 
  Return the unique task id for the current task.
 
---- Non-blocking I/O
+## Non-blocking I/O
 
 There is a small amount of runtime support for non-blocking I/O
 on file descriptors.
 
-int fdnoblock(int fd);
+`int fdnoblock(int fd);`
 
  Sets I/O on the given fd to be non-blocking.  Should be
  called before any of the other fd routines.
 
-int fdread(int, void*, int);
+`int fdread(int, void*, int);`
 
  Like regular read(), but puts task to sleep while waiting for
  data instead of blocking the whole program.
 
-int fdwrite(int, void*, int);
+`int fdwrite(int, void*, int);`
 
  Like regular write(), but puts task to sleep while waiting to
  write data instead of blocking the whole program.
 
-void fdwait(int fd, int rw);
+`void fdwait(int fd, int rw);`
 
  Low-level call sitting underneath fdread and fdwrite.
  Puts task to sleep while waiting for I/O to be possible on fd.
@@ -111,12 +113,12 @@ void fdwait(int fd, int rw);
  anything else means just exceptional conditions (hang up, etc.)
  The 'r' and 'w' also wake up for exceptional conditions.
 
---- Network I/O
+## Network I/O
 
 These are convenient packaging of the ugly Unix socket routines.
 They can all put the current task to sleep during the call.
 
-int netannounce(int proto, char *address, int port)
+`int netannounce(int proto, char *address, int port);`
 
  Start a network listener running on address and port of protocol.
  Proto is either TCP or UDP.  Port is a port number.  Address is a
@@ -126,7 +128,7 @@ int netannounce(int proto, char *address, int port)
  Examples: netannounce(TCP, "localhost", 80) or
   netannounce(TCP, "127.0.0.1", 80) or netannounce(TCP, 0, 80).
 
-int netaccept(int fd, char *server, int*port)
+`int netaccept(int fd, char *server, int*port);`
 
  Get the next connection that comes in to the listener fd.
  Returns a fd to use to talk to the guy who just connected.
@@ -134,13 +136,16 @@ int netaccept(int fd, char *server, int*port)
  16 bytes that is filled in with the remote IP address.
  If port is not null, it is filled in with the report port.
  Example:
+
+```c
   char server[16];
   int port;
 
   if(netaccept(fd, server, &port) >= 0)
    printf("connect from %s:%d", server, port);
+```
 
-int netdial(int proto, char *name, int port)
+`int netdial(int proto, char *name, int port);`
 
  Create a new (outgoing) connection to a particular host.
  Name can be an ip address or a domain name.  If it's a domain name,
@@ -149,49 +154,63 @@ int netdial(int proto, char *name, int port)
  Example: netdial(TCP, "www.google.com", 80)
   or netdial(TCP, "18.26.4.9", 80)
 
---- Time
+## Time
 
-unsigned int taskdelay(unsigned int ms)
+`unsigned int taskdelay(unsigned int ms);`
 
  Put the current task to sleep for approximately ms milliseconds.
  Return the actual amount of time slept, in milliseconds.
 
---- Example programs
+## Example programs
 
-In this directory, tcpproxy.c is a simple TCP proxy that illustrates
+In this directory, `tcpproxy.c` is a simple TCP proxy that illustrates
 most of the above.  You can run
 
- tcpproxy 1234 www.google.com 80
+- tcpproxy 1234 <www.google.com> 80
 
 and then you should be able to visit <http://localhost:1234/> and see Google.
 
 Other examples are:
- primes.c - simple prime sieve
- httpload.c - simple HTTP load generator
- testdelay.c - test taskdelay()
 
---- Building
+- primes.c - simple prime sieve
+- httpload.c - simple HTTP load generator
+- testdelay.c - test taskdelay()
 
-To build, run make.  You can run make install to copy task.h and
-libtask.a to the appropriate places in /usr/local.  Then you
-should be able to just link with -ltask in your programs
-that use it.
+## Building
+
+To build, run **cmake**. You can copy task.h and
+libtask.a to the appropriate places in /usr/local. Then you
+should be able to just link with -ltask in your programs that use it.
+
+```shell
+mkdir build
+cd build
+# Windows
+cmake .. -D CMAKE_GENERATOR_PLATFORM=Win32
+# Linux/Unix
+cmake ..
+cmake --build .
+```
+
+`libtask.a` or `libtask.lib` is in **lib** directory.
 
 On SunOS Solaris machines, run makesun instead of just make.
 
---- Contact Info
+### Contact Info
 
 Please email me with questions or problems.
 
 Russ Cox
 <rsc@swtch.com>
 
---- Stuff you probably won't use at first ---
---- but might want to know about eventually ---
+***Stuff you probably won't use at first***
+***but might want to know about eventually***
 
+```c
 void tasksleep(Rendez*);
 int taskwakeup(Rendez*);
 int taskwakeupall(Rendez*);
+```
 
  A Rendez is a condition variable. You can declare a new one by
  just allocating memory for it (or putting it in another structure)
@@ -202,9 +221,11 @@ int taskwakeupall(Rendez*);
  Taskwakeupall(r) wakes up all the tasks sleeping on r.
  They both return the actual number of tasks awakened.
 
+```c
 void qlock(QLock*);
 int canqlock(QLock*);
 void qunlock(QLock*);
+```
 
  You probably won't need locks because of the cooperative
  scheduling, but if you do, here are some.  You can make a new
@@ -214,6 +235,7 @@ void qunlock(QLock*);
  Calling canqlock tries to lock the lock, but will not give up the CPU.
  It returns 1 if the lock was acquired, 0 if it cannot be at this time.
 
+```C
 void rlock(RWLock*);
 int canrlock(RWLock*);
 void runlock(RWLock*);
@@ -221,12 +243,13 @@ void runlock(RWLock*);
 void wlock(RWLock*);
 int canwlock(RWLock*);
 void wunlock(RWLock*);
+```
 
  RWLocks are reader-writer locks.  Any number of readers
  can lock them at once, but only one writer at a time.
  If a writer is holding it, there can't be any readers.
 
-Channel *chancreate(int, int);
+`Channel *chancreate(int, int);`
 etc.
 
  Channels are buffered communication pipes you can
@@ -234,7 +257,7 @@ etc.
  doing most of the inter-task communication using channels.
 
  For details on channels see the description of channels in
- http://swtch.com/usr/local/plan9/man/man3/thread.html and
- http://swtch.com/~rsc/thread/
+ <http://swtch.com/usr/local/plan9/man/man3/thread.html> and
+ <http://swtch.com/~rsc/thread/>
  and also the example program primes.c, which implements
  a concurrent prime sieve.
